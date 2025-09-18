@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Lock Settings</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="popup-container">
+        <header class="popup-header">
+            <h1>🔒 Focus Lock</h1>
+            <p>Smart Distraction Blocker</p>
+        </header>
+        
+        <main class="popup-main">
+            <div class="setting-group">
+                <label class="toggle-container">
+                    <input type="checkbox" id="enabled-toggle">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Enable Focus Lock</span>
+                </label>
+            </div>
+            
+            <div class="setting-group">
+                <label for="lock-duration">Lock Duration (minutes):</label>
+                <input type="number" id="lock-duration" min="1" max="60" value="5">
+            </div>
+            
+            <div class="setting-group">
+                <label for="study-keywords">Study-related Keywords:</label>
+                <textarea 
+                    id="study-keywords" 
+                    placeholder="Enter keywords separated by commas..."
+                    rows="4"
+                ></textarea>
+                <small class="help-text">
+                    Pages containing these keywords will be considered study-related and won't be blocked.
+                </small>
+            </div>
+            
+            <div class="button-group">
+                <button id="save-settings" class="btn btn-primary">Save Settings</button>
+                <button id="restore-defaults" class="btn btn-secondary">Restore Defaults</button>
+            </div>
+            
+            <div id="status-message" class="status-message"></div>
+        </main>
+        
+        <footer class="popup-footer">
+            <p>Stay focused, stay productive! 💪</p>
+        </footer>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>
