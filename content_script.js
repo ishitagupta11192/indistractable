@@ -63,7 +63,16 @@ class FocusLock {
 
   isStudyRelated(pageContent) {
     const { title, bodyText, url } = pageContent;
-    const keywords = this.settings.studyKeywords.map(k => k.toLowerCase());
+    
+    // Handle both new categorized format and legacy array format
+    let keywords = [];
+    if (this.settings.studyKeywords && typeof this.settings.studyKeywords === 'object') {
+      // New categorized format
+      keywords = Object.values(this.settings.studyKeywords).flat().map(k => k.toLowerCase());
+    } else if (Array.isArray(this.settings.studyKeywords)) {
+      // Legacy array format
+      keywords = this.settings.studyKeywords.map(k => k.toLowerCase());
+    }
     
     // Check if any study keyword is found in title, body, or URL
     const foundKeywords = keywords.filter(keyword => 

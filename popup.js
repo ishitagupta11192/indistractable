@@ -1,111 +1,103 @@
 // Focus Lock - Popup Script
-// Handles the popup interface and settings management
+// Handles the simplified popup interface for quick toggling
 
 class PopupManager {
   constructor() {
-    this.defaultSettings = {
-      enabled: true,
-      lockDuration: 5,
-      studyKeywords: [
-        "study", "lecture", "assignment", "homework", "tutorial", 
-        "course", "project", "notes", "exam", "lab", "syllabus",
-        "research", "academic", "learning", "education", "university",
-        "college", "school", "textbook", "curriculum", "workshop"
-      ]
-    };
-    
     this.init();
   }
 
   async init() {
     await this.loadSettings();
     this.bindEvents();
+    this.updateDisplay();
   }
 
   async loadSettings() {
     return new Promise((resolve) => {
       chrome.storage.local.get(['enabled', 'lockDuration', 'studyKeywords'], (result) => {
-        // Set UI values
-        document.getElementById('enabled-toggle').checked = result.enabled !== false;
-        document.getElementById('lock-duration').value = result.lockDuration || 5;
-        document.getElementById('study-keywords').value = (result.studyKeywords || this.defaultSettings.studyKeywords).join(', ');
+        this.settings = {
+          enabled: result.enabled !== false,
+          lockDuration: result.lockDuration || 5,
+          studyKeywords: result.studyKeywords || {}
+        };
         resolve();
       });
     });
   }
 
   bindEvents() {
-    document.getElementById('save-settings').addEventListener('click', () => {
-      this.saveSettings();
+    // Toggle extension on/off
+    document.getElementById('enabled-toggle').addEventListener('click', () => {
+      this.toggleExtension();
     });
     
-    document.getElementById('restore-defaults').addEventListener('click', () => {
-      this.restoreDefaults();
+    // Open settings page
+    document.getElementById('open-settings').addEventListener('click', () => {
+      chrome.runtime.openOptionsPage();
     });
     
-    // Auto-save when toggle changes
-    document.getElementById('enabled-toggle').addEventListener('change', () => {
-      this.saveSettings();
-    });
-    
-    // Auto-save when duration changes
-    document.getElementById('lock-duration').addEventListener('change', () => {
-      this.saveSettings();
+    // View stats (placeholder for future feature)
+    document.getElementById('view-stats').addEventListener('click', () => {
+      this.showStats();
     });
   }
 
-  async saveSettings() {
+  async toggleExtension() {
     try {
-      const enabled = document.getElementById('enabled-toggle').checked;
-      const lockDuration = parseInt(document.getElementById('lock-duration').value);
-      const keywordsText = document.getElementById('study-keywords').value.trim();
-      
-      // Parse keywords
-      const studyKeywords = keywordsText
-        .split(',')
-        .map(keyword => keyword.trim())
-        .filter(keyword => keyword.length > 0);
-      
-      // Validate duration
-      if (lockDuration < 1 || lockDuration > 60) {
-        this.showStatus('Duration must be between 1 and 60 minutes', 'error');
-        return;
-      }
-      
-      // Validate keywords
-      if (studyKeywords.length === 0) {
-        this.showStatus('Please enter at least one study keyword', 'error');
-        return;
-      }
+      this.settings.enabled = !this.settings.enabled;
       
       // Save to storage
       await chrome.storage.local.set({
-        enabled,
-        lockDuration,
-        studyKeywords
+        enabled: this.settings.enabled
       });
       
-      this.showStatus('Settings saved successfully!', 'success');
+      // Update display
+      this.updateDisplay();
       
       // Notify content script of settings change
       this.notifyContentScript();
       
     } catch (error) {
-      console.error('Error saving settings:', error);
-      this.showStatus('Error saving settings', 'error');
+      console.error('Error toggling extension:', error);
     }
   }
 
-  async restoreDefaults() {
-    try {
-      await chrome.storage.local.set(this.defaultSettings);
-      await this.loadSettings();
-      this.showStatus('Default settings restored!', 'success');
-      this.notifyContentScript();
-    } catch (error) {
-      console.error('Error restoring defaults:', error);
-      this.showStatus('Error restoring defaults', 'error');
+  updateDisplay() {
+    const toggle = document.getElementById('enabled-toggle');
+    const statusIndicator = document.getElementById('status-indicator');
+    const currentStatus = document.getElementById('current-status');
+    const lockDurationDisplay = document.getElementById('lock-duration-display');
+    const keywordCount = document.getElementById('keyword-count');
+    
+    // Update toggle state
+    if (this.settings.enabled) {
+      toggle.classList.add('active');
+      statusIndicator.textContent = 'Extension Enabled';
+      statusIndicator.className = 'status-indicator status-enabled';
+      currentStatus.textContent = 'Active';
+    } else {
+      toggle.classList.remove('active');
+      statusIndicator.textContent = 'Extension Disabled';
+      statusIndicator.className = 'status-indicator status-disabled';
+      currentStatus.textContent = 'Inactive';
     }
+    
+    // Update stats
+    lockDurationDisplay.textContent = `${this.settings.lockDuration} minutes`;
+    
+    // Count total keywords
+    let totalKeywords = 0;
+    if (this.settings.studyKeywords && typeof this.settings.studyKeywords === 'object') {
+      totalKeywords = Object.values(this.settings.studyKeywords).flat().length;
+    } else if (Array.isArray(this.settings.studyKeywords)) {
+      totalKeywords = this.settings.studyKeywords.length;
+    }
+    keywordCount.textContent = totalKeywords;
+  }
+
+  showStats() {
+    // Placeholder for future stats feature
+    alert('Stats feature coming soon! 📊\n\nThis will show:\n• Time spent studying\n• Websites blocked\n• Focus sessions completed');
   }
 
   notifyContentScript() {
@@ -117,18 +109,6 @@ class PopupManager {
         });
       });
     });
-  }
-
-  showStatus(message, type = 'info') {
-    const statusElement = document.getElementById('status-message');
-    statusElement.textContent = message;
-    statusElement.className = `status-message ${type}`;
-    
-    // Auto-hide after 3 seconds
-    setTimeout(() => {
-      statusElement.textContent = '';
-      statusElement.className = 'status-message';
-    }, 3000);
   }
 }
 

@@ -6,12 +6,12 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({
     enabled: true,
     lockDuration: 5, // minutes
-    studyKeywords: [
-      "study", "lecture", "assignment", "homework", "tutorial", 
-      "course", "project", "notes", "exam", "lab", "syllabus",
-      "research", "academic", "learning", "education", "university",
-      "college", "school", "textbook", "curriculum", "workshop"
-    ]
+    studyKeywords: {
+      academic: ["study", "academic", "university", "college", "school", "syllabus", "curriculum"],
+      study: ["lecture", "assignment", "homework", "tutorial", "notes", "textbook", "exam"],
+      learning: ["research", "learning", "education", "workshop", "tutorial", "knowledge"],
+      course: ["course", "project", "lab", "exam", "lecture", "seminar"]
+    }
   });
 });
 
