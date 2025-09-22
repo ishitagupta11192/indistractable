@@ -10,7 +10,8 @@ class OptionsManager {
         academic: ["study", "academic", "university", "college", "school", "syllabus", "curriculum"],
         study: ["lecture", "assignment", "homework", "tutorial", "notes", "textbook", "exam"],
         learning: ["research", "learning", "education", "workshop", "tutorial", "knowledge"],
-        course: ["course", "project", "lab", "exam", "lecture", "seminar"]
+        course: ["course", "project", "lab", "exam", "lecture", "seminar"],
+        custom: []
       }
     };
     
@@ -50,7 +51,8 @@ class OptionsManager {
       academic: [],
       study: [],
       learning: [],
-      course: []
+      course: [],
+      custom: []
     };
     
     keywordArray.forEach(keyword => {
@@ -93,7 +95,7 @@ class OptionsManager {
     });
     
     // Enter key support for keyword inputs
-    ['academic-input', 'study-input', 'learning-input', 'course-input'].forEach(inputId => {
+    ['academic-input', 'study-input', 'learning-input', 'course-input', 'custom-input'].forEach(inputId => {
       document.getElementById(inputId).addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           const category = inputId.replace('-input', '');
@@ -120,7 +122,7 @@ class OptionsManager {
   }
 
   renderKeywords() {
-    const categories = ['academic', 'study', 'learning', 'course'];
+    const categories = ['academic', 'study', 'learning', 'course', 'custom'];
     
     categories.forEach(category => {
       const container = document.getElementById(`${category}-keywords`);

@@ -10,7 +10,8 @@ chrome.runtime.onInstalled.addListener(() => {
       academic: ["study", "academic", "university", "college", "school", "syllabus", "curriculum"],
       study: ["lecture", "assignment", "homework", "tutorial", "notes", "textbook", "exam"],
       learning: ["research", "learning", "education", "workshop", "tutorial", "knowledge"],
-      course: ["course", "project", "lab", "exam", "lecture", "seminar"]
+      course: ["course", "project", "lab", "exam", "lecture", "seminar"],
+      custom: []
     }
   });
 });
